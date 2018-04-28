@@ -1,0 +1,19 @@
+<mdc-top-app-bar title="Bentley Fitness" event="toggle-drawer">
+    <mdc-top-app-bar--action event="show-help" icon="help"></mdc-top-app-bar--action>
+    <mdc-top-app-bar--action><mdc-subheading>{{title}}</mdc-subheading></mdc-top-app-bar--action>
+</mdc-top-app-bar>
+
+
+
+<mdc-toolbar slot="toolbar" fixed>
+    <mdc-toolbar-row>
+        <mdc-toolbar-section align-start>
+            <mdc-toolbar-menu-icon event="toggle-drawer"></mdc-toolbar-menu-icon>
+            <mdc-toolbar-title>Bentley Fitness</mdc-toolbar-title>
+        </mdc-toolbar-section>
+        <mdc-toolbar-section align-end>
+            <mdc-toolbar-icon event="show-help" icon="help"></mdc-toolbar-icon>
+            <mdc-toolbar-icon event="show-help" icon="login"></mdc-toolbar-icon>
+        </mdc-toolbar-section>
+    </mdc-toolbar-row>
+</mdc-toolbar>

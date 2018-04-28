@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Bentley Fitness Login</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="images/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
+    integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    
+    <link href="css/logout.css" rel="stylesheet">
+</head>
+
+<body class="text-center">
+<div class="container">
+    <h1 class="h1 mb-3 text-primary">You Have Been Signed Out!</h1>
+    <h2 class="h2 mb-3 text-secondary">You will be automatically redirected in <span id="countDown">3</span> seconds</h2>
+    <div style="width:100%;height:100px;margin:0;"></div>
+</div>
+
+</body>
+<script>
+    let seconds = 2;
+    window.setInterval(function(){
+        if (seconds < 0) {
+                location.href = "/";
+                return;
+        }
+        document.getElementById('countDown').innerText = seconds;
+        seconds--;
+    }, 1000);
+</script>
+</html>

@@ -1,0 +1,55 @@
+.content {
+    display: flex;
+    flex: 1 1 auto;
+    height: 92%;
+    box-sizing: border-box;
+}
+.selectable:hover {
+    cursor: pointer;
+    filter: brightness(95%);
+}
+main {
+    width: 100%;
+}
+.userNameZone {
+    min-width: 100px;
+    text-align: center;
+}
+.userNameZone:hover {
+    filter: brightness(90%);
+    cursor: pointer;
+}
+.setField {
+    width: 35%;
+    margin: 0;
+}
+.dialogField {
+    width: 80%;
+    margin: auto;
+}
+.resultValue {
+    width: 35%;
+    margin: 0;
+}
+.setDisplay {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+}
+.completed {
+
+}
+.editable {
+
+}
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+}
+
+.setButtons {
+    align-content: flex-end;
+    float: right;
+}

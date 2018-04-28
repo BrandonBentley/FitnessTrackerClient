@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Bentley Fitness</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-mdc-adapter/dist/vue-mdc-adapter.min.css">
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-mdc-adapter/dist/vue-mdc-adapter.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.0/vue-resource.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.css" type="text/css">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.js" type="text/css"></script>
+</head>
+<body>
+<div id="app">
+    <mdc-layout-app>
+        <main>
+            <mdc-card style="margin: 128px auto; max-width: 600px;">
+                <mdc-card-header>
+                    <mdc-card-title large>Bentley Fitness</mdc-card-title>
+                    <mdc-card-subtitle>&nbsp;</mdc-card-subtitle>
+                    <mdc-card-subtitle>{{submitAction}}</mdc-card-subtitle>
+                </mdc-card-header>
+                <mdc-card-text>
+                    <div style="margin-bottom: 8px;">
+                        <div class="loginForm">
+                            <mdc-textfield v-model="username" type="text" label="Username"></mdc-textfield>
+                            <mdc-textfield v-model="password" @keyup.enter="onSubmit()" type="password" label="Password"></mdc-textfield>
+                                <mdc-linear-progress v-if="isWaiting" indeterminate></mdc-linear-progress>
+                        </div>
+                    </div>
+                    <div class="signupOption">
+                        <mdc-button @click="showSignupDialog()" dense>Sign Up</mdc-button>
+                    </div>
+                    <mdc-button class="submitButton" @click="onSubmit()" style="max-width: 200px; float: right;" raised>{{submitAction}}</mdc-button>
+
+                </mdc-card-text>
+            </mdc-card>
+        </main>
+        <mdc-dialog ref="signupDialog"
+                    title="Sign Up" accept="Done" cancel="Cancel"
+                    @accept="submitSignUp" @cancel="clearDialog" @validate="onValidate">
+            <div class="dialogBody">
+                <mdc-textfield v-model="signupData.Name" class="dialogField" type="text" label="Name"></mdc-textfield>
+                <mdc-textfield v-model="signupData.Username" class="dialogField" type="text" label="Username"></mdc-textfield>
+                <mdc-textfield v-model="signupData.Email" class="dialogField" type="email" label="Email"></mdc-textfield>
+                <mdc-textfield v-model="signupData.Password" class="dialogField" type="password" label="Password"></mdc-textfield>
+                <mdc-linear-progress v-if="isWaiting" indeterminate></mdc-linear-progress>
+                <div class="errorBox">
+                    <mdc-body v-model="errorMessage"></mdc-body>
+                </div>
+
+                <!--<mdc-textfield v-model="confirmPassword" class="dialogField" type="password" label="Confirm Password"></mdc-textfield>-->
+            </div>
+
+        </mdc-dialog>
+    </mdc-layout-app>
+
+
+</div>
+</body>
+<style>
+    main {
+        width: 100%;
+    }
+    .loginForm {
+        display: flex;
+        flex-direction: column;
+    }
+    .signupOption {
+        text-align: center;
+        margin: auto;
+    }
+    .dialogBody {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+    }
+    .errorBox {
+        color: red;
+        text-align: center;
+    }
+</style>
+<script>
+    Vue.use(VueResource);
+    new Vue({
+        el: '#app',
+        data: {
+            username: "",
+            password: "",
+            passwordConfirm: "",
+            submitAction: "Login",
+            errorMessage: "",
+            signupData: {},
+            isWaiting: false,
+        },
+        methods: {
+            onSubmit(){
+                this.isWaiting = true;
+                let loginObject = JSON.stringify({type: this.submitAction, username: this.username, password:this.password});
+                console.log(loginObject);
+                this.$http.post("/login", loginObject)
+                    .then(response => {
+                        location.href = "/";
+                        console.log(response);
+                    }, error => {
+                        if (error != null) {
+                            this.isWaiting = false;
+                        }
+                    });
+            },
+            showSignupDialog() {
+                this.signupData = {Username: "", Email: "", Password: "", Name: ""};
+                this.$refs.signupDialog.show();
+            },
+            submitSignUp() {
+                this.$http.post("/signup", this.signupData)
+                    .then(response => {
+                        if (response.errorMessage != "") {
+                            this.errorMessage = response.errorMessage;
+                            return;
+                        }
+                        location.href = "/";
+                        console.log(response);
+                    }, error => {
+                        if (error != null) {
+                            this.isWaiting = false;
+                        }
+                    });
+            },
+            clearDialog() {
+                this.signupData = {};
+            },
+            onValidate() {
+                this.isWaiting = true;
+                this.submitSignUp();
+                this.isWaiting = false;
+            },
+        }
+    });
+</script>
+<script>
+
+</script>
+</html>

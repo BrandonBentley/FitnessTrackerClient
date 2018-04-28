@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bentley Fitness</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-mdc-adapter/dist/vue-mdc-adapter.min.css">
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/vue-mdc-adapter/dist/vue-mdc-adapter.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-resource/1.5.0/vue-resource.js"></script>
+
+</head>
+<body>
+<div id="app">
+    <mdc-layout-app>
+        <mdc-top-app-bar title="Bentley Fitness" event="toggle-drawer">
+            <mdc-top-app-bar--action v-if="history.length > 0" @click="backUpOne()" event="back-up" icon="arrow_back"></mdc-top-app-bar--action>
+            <mdc-top-app-bar--action @click="openNewDialog()" icon="add"></mdc-top-app-bar--action>
+            <mdc-top-app-bar--action @click="toggleDeleteEnable()" icon="delete"></mdc-top-app-bar--action>
+            <mdc-top-app-bar--action icon="account_circle"></mdc-top-app-bar--action>
+            <div class="userNameZone"style="">
+                    <mdc-subheading>&nbsp;{{fullname}}&nbsp;</mdc-subheading>
+            </div>
+
+        </mdc-top-app-bar>
+        <mdc-linear-progress v-if="isLoading" indeterminate accent></mdc-linear-progress>
+        <div class="content">
+        <mdc-drawer slot="drawer" toggle-on="toggle-drawer" persistent>
+            <mdc-drawer-list>
+                <mdc-drawer-item start-icon="home">Home</mdc-drawer-item>
+                <mdc-drawer-item start-icon="build">Workouts</mdc-drawer-item>
+                <mdc-drawer-item start-icon="view_module">Catalog</mdc-drawer-item>
+            </mdc-drawer-list>
+        </mdc-drawer>
+
+        <main>
+            <div style="text-align: center">
+                <mdc-display>{{pageTitle}}</mdc-display>
+            </div>
+            <div v-if="!isSets">
+            <transition name="fade">
+                <div v-if="!isLoading" class="cardCenter">
+                    <div v-for="item of userData.List" @click="getSubItems(item)">
+                        <mdc-card class="selectable" :value="item.Value" v-bind:data="item" v-bind:key="item.Title" style="margin: 10px auto; max-width: 800px;">
+                            <mdc-card-header style="display: flex; flex-direction: row">
+                                <mdc-card-title large>{{item.Title}}</mdc-card-title>
+                                <mdc-button v-if="deleteEnabled" style="float: right" @click="deleteItem(item)" ><mdc-icon icon="delete"></mdc-icon></mdc-button>
+                            </mdc-card-header>
+                            <mdc-card-text>
+                                <div>
+
+                                </div>
+                            </mdc-card-text>
+                            <mdc-linear-progress v-if="item.isProcessing" style="margin-top: 24px" indeterminate accent></mdc-linear-progress>
+                        </mdc-card>
+                    </div>
+                </div>
+            </transition>
+            </div>
+            <div v-if="isSets">
+            <transition name="fade">
+                <div v-if="!isLoading" class="cardCenter">
+                    <div v-for="item of userData.List" @click="swapEditable()">
+                        <mdc-card class="selectable" style="margin: 10px auto; max-width: 800px;">
+                            <mdc-card-header>
+                                <mdc-card-subtitle large>Set {{item.Number}}</mdc-card-subtitle>
+                            </mdc-card-header>
+                            <mdc-card-text>
+                                <div v-if="!item.Done" class="editable setDisplay">
+                                    <mdc-textfield v-model="item.Reps" class="setField" type="number" label="Reps"></mdc-textfield>
+                                    <mdc-textfield v-model="item.Weight" class="setField" type="number" label="Weight" style="margin-left: 1%"></mdc-textfield>
+                                    <mdc-button @click="submitSet(item)" raised accent>Save</mdc-button>
+                                </div>
+                                <div v-if="item.Done" class="completed setDisplay">
+                                    <mdc-subheading v-model="item.Reps" class="resultValue">Rep Count: {{item.Reps}}</mdc-subheading>
+                                    <mdc-subheading v-model="item.Weight" class="resultValue">Weight: {{item.Weight}}</mdc-subheading>
+                                    <div class="setButtons">
+                                        <mdc-button v-if="editEnabled" @click="editSet(item)" accent><mdc-icon icon="mode_edit"></mdc-icon></mdc-button>
+                                        <mdc-button v-if="deleteEnabled" @click="deleteItem(item)" ><mdc-icon icon="delete"></mdc-icon></mdc-button>
+                                    </div>
+
+                                </div>
+                            </mdc-card-text>
+                            <mdc-linear-progress v-if="item.isProcessing" style="margin-top: 24px" indeterminate accent></mdc-linear-progress>
+                        </mdc-card>
+                    </div>
+                </div>
+            </transition>
+            </div>
+            <div v-if="empty" style="text-align: center; color: darkgray;">
+                <mdc-display>Nothing To Show</mdc-display>
+                <mdc-display>:(</mdc-display>
+            </div>
+
+        </main>
+        </div>
+        <!-- New Item Dialogs-->
+        <mdc-dialog ref="workoutDialog"
+                    title="New Workout" accept="Done" cancel="Cancel"
+        @accept="submitWorkout" @cancel="clearDialog"
+        >
+
+            <mdc-textfield v-model="submitData.Name" @keyup.enter="submitWorkout()" class="dialogField" type="text" label="Name"></mdc-textfield>
+
+        </mdc-dialog>
+        <mdc-dialog ref="exerciseDialog"
+                    title="New Exercise" accept="Done" cancel="Cancel"
+                    @accept="submitExercise" @cancel="clearDialog">
+            <mdc-textfield v-model="submitData.Name" @keyup.enter="submitExercise()" class="dialogField" type="text" label="Name"></mdc-textfield>
+        </mdc-dialog>
+
+    </mdc-layout-app>
+
+
+</div>
+</body>
+<style>
+
+</style>
+<script src="js/main.js"></script>
+<script>
+
+</script>
+</html>

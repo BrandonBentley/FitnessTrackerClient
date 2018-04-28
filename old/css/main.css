@@ -1,0 +1,110 @@
+.workoutCard {
+    margin: 1% 0 1% 0;
+    padding: 0;
+    align: left;
+    vertical-align: center;
+    font-size: large;
+    opacity: 0;
+    display: flex;
+    animation: fadeIn 0.5s ease-in both;
+}
+
+.reverseAnimation {
+    animation: fadeOut 0.3s ease-in both;
+}
+
+.cardCenter {
+    width: 75%;
+    margin: 0 1% 0 1%;
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+.workoutCard:hover {
+    cursor: pointer;
+    filter: brightness(95%);
+}
+
+.cardIcon:hover {
+    cursor: pointer;
+    filter: brightness(120%);
+}
+
+.headGraphic {
+    height: 200px;
+    background-color: #022e90a8;
+    /*background-color: #062e67a8;*/
+}
+
+.workoutCardContent {
+    /*margin: auto;*/
+    display: flex;
+    justify-content: space-between;
+}
+
+.workoutCardContent  p {
+    margin: 0;
+}
+
+.cardIcon {
+    vertical-align: middle;
+    color: lightgray;
+    margin: auto;
+}
+
+.cardIconDiv {
+    width: 5%;
+    text-align: right;
+    padding: auto;
+    margin: 0;
+    font-size: small;
+    vertical-align: middle;
+}
+.cardIconDiv:hover {
+    filter: ;
+}
+
+
+.updateZone {
+    margin: auto;
+    color: white;
+}
+.noContent {
+    margin: auto;
+    text-align: center;
+}
+.rightOptionMenu {
+    width: 20%;
+    height: 400px;
+    background-color: #ededf0;
+    float: right;
+    margin: 0 auto 0 auto;
+    padding-top: 1%;
+    overflow-y: auto;
+}
+
+/*===========================================*/
+/*Animations*/
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate3d(0, -20%, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+    to {
+        opacity: 0;
+        transform: translate3d(0, -20%, 0);
+    }
+}
