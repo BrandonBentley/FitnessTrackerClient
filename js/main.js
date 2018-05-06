@@ -2,8 +2,8 @@ Vue.use(VueResource);
 var app = new Vue({
     el: '#app',
     data: {
-        username: "TMoney",
-        fullname: "Taco Money",
+        username: "Default",
+        fullname: "Default",
         pageTitle: "",
         isLoading: true,
         isProcessing: false,
@@ -29,6 +29,7 @@ var app = new Vue({
             app.itemList = app.userData.List;
             app.isLoading = false;
             app.pageTitle = app.userData.Title;
+            app.isEmpty();
             console.log(app.itemList);
         });
     }.bind(this),
@@ -132,12 +133,14 @@ var app = new Vue({
             app.userData.List.unshift({Title: app.submitData.Name, Id: "", isProcessing: true});
             this.$http.post("/workouts", app.submitData)
                 .then(data => {
-                        app.userData.List[0] = data.body;
-                        console.log(data.body);
-                        app.submitData = {Name: "", Id: ""};
+                    app.userData.List[0] = data.body;
+                    console.log(data.body);
+                    app.submitData = {Name: "", Id: ""};
+                    app.isEmpty();
                 }, error => {
                     if (error != null) {
                         console.log(error);
+                        app.isEmpty();
                     }
                 });
         },
@@ -221,6 +224,7 @@ var app = new Vue({
                     else {
                         tempItem = {Title: app.userData.Title, Value: app.userData.Value};
                     }
+                    app.backUpOne();
                     app.pushOn = false;
                     console.log(tempItem);
                     app.getSubItems(tempItem);
